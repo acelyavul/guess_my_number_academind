@@ -21,12 +21,10 @@ function GameOverScreen({roundsNumber, userNumber, onStartNewGame}) {
   if (height < 400) {
     imageSize = 100;
     marginSize = 18;
-    console.log('yegg');
   }
 
   if (width < 412) {
     imageSize = 200;
-    console.log('yes');
   }
 
   const imageStyle = {

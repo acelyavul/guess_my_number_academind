@@ -1,6 +1,12 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import {View, StyleSheet, Alert, FlatList} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Alert,
+  FlatList,
+  useWindowDimensions,
+} from 'react-native';
 
 import NumberContainer from '../components/game/NumberContainer';
 import Card from '../components/ui/Card';
@@ -26,6 +32,7 @@ function GameScreen({userNumber, onGameOver}) {
   const initialGuess = generateRandomBetween(1, 100, userNumber);
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
   const [guessRounds, setGuessRounds] = useState([initialGuess]);
+  const {height} = useWindowDimensions();
 
   useEffect(() => {
     if (currentGuess === userNumber) {
@@ -70,26 +77,45 @@ function GameScreen({userNumber, onGameOver}) {
   return (
     <View style={styles.screen}>
       <Title>Opponent's Guess</Title>
-      <NumberContainer>{currentGuess}</NumberContainer>
-      <Card>
-        <InstructionText style={styles.instructionText}>
-          Higher or lower?
-        </InstructionText>
-        <View style={styles.buttonsContainer}>
-          <View style={styles.buttonContainer}>
-            <PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')}>
-              -
-            </PrimaryButton>
+      {height < 400 ? (
+        <>
+          <View style={styles.buttonsContainerLandscape}>
+            <View style={styles.buttonContainerLandscape}>
+              <PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')}>
+                -
+              </PrimaryButton>
+            </View>
+            <NumberContainer>{currentGuess}</NumberContainer>
+            <View style={styles.buttonContainerLandscape}>
+              <PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}>
+                +
+              </PrimaryButton>
+            </View>
           </View>
-          <View style={styles.buttonContainer}>
-            <PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}>
-              +
-            </PrimaryButton>
-          </View>
-        </View>
-      </Card>
+        </>
+      ) : (
+        <>
+          <NumberContainer>{currentGuess}</NumberContainer>
+          <Card>
+            <InstructionText style={styles.instructionText}>
+              Higher or lower?
+            </InstructionText>
+            <View style={styles.buttonsContainer}>
+              <View style={styles.buttonContainer}>
+                <PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')}>
+                  -
+                </PrimaryButton>
+              </View>
+              <View style={styles.buttonContainer}>
+                <PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}>
+                  +
+                </PrimaryButton>
+              </View>
+            </View>
+          </Card>
+        </>
+      )}
       <View style={styles.listContainer}>
-        {/* {guessRounds.map(guessRound => <Text key={guessRound}>{guessRound}</Text>)} */}
         <FlatList
           data={guessRounds}
           renderItem={itemData => (
@@ -110,7 +136,9 @@ export default GameScreen;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    padding: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 36,
+    alignItems: 'center',
   },
   instructionText: {
     marginBottom: 12,
@@ -118,8 +146,15 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: 'row',
   },
+  buttonsContainerLandscape: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   buttonContainer: {
     flex: 1,
+  },
+  buttonContainerLandscape: {
+    width: 100,
   },
   listContainer: {
     flex: 1,
